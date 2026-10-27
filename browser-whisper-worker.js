@@ -19,7 +19,7 @@ self.onmessage=async ({data})=>{
   try{
     const model=await load(id);
     postMessage({id,type:'progress',message:'Whisper is transcribing on this device…'});
-    const result=await model(samples,{chunk_length_s:30,stride_length_s:5,task:'transcribe'});
+    const result=await model(samples,{chunk_length_s:30,stride_length_s:5});
     postMessage({id,type:'result',text:String(result.text||'').trim()});
   }catch(e){postMessage({id,type:'error',message:e?.message||String(e)});}
 };
