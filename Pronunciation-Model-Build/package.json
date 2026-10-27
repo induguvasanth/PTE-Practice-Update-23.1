@@ -1,0 +1,1 @@
+{"private":true,"type":"module","scripts":{"build":"node build.mjs"},"dependencies":{"hama-js":"^1.7.0","esbuild":"^0.25.0"}}

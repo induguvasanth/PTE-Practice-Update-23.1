@@ -1,0 +1,1 @@
+Update 29: uses uploaded hama-browser module. Expected phones are taken from G2P alignments and heard phones from ASR phonemes; edit distance is normalized by max length. Score is experimental, NOT Pearson-calibrated. Test on real audio before deployment. Original Apps Script and other project files preserved.

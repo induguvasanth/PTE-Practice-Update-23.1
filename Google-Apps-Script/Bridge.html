@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><title>PTE Bridge</title></head><body><script>
+(function(){'use strict';
+const allowed='https://induguvasanth.github.io';
+// Apps Script HTML Service may wrap this page in an additional Google iframe.
+// Talk to the actual website (top), not the Google iframe parent.
+function notify(target,payload){try{target.postMessage(payload,allowed)}catch(_){}}
+window.addEventListener('message',function(e){
+ if(e.origin!==allowed || e.source!==top)return;
+ const d=e.data||{};
+ if(d.type!=='PTE_BRIDGE_REQUEST'||typeof d.id!=='string'||d.id.length>120)return;
+ const method=d.method==='write'?'bridgeWrite':'bridgeRequest';
+ const args=d.method==='write'?d.params:{params:d.params};
+ google.script.run.withSuccessHandler(function(result){notify(e.source,{type:'PTE_BRIDGE_RESPONSE',id:d.id,result:result})})
+ .withFailureHandler(function(err){notify(e.source,{type:'PTE_BRIDGE_RESPONSE',id:d.id,error:String(err&&err.message||err)})})[method](args);
+});
+notify(top,{type:'PTE_BRIDGE_READY'});
+})();
+</script></body></html>

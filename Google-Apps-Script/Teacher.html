@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PTE Teacher Dashboard</title><style>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#17243b;background:#f5f7fc}*{box-sizing:border-box}body{margin:0}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}.hidden{display:none!important}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 20% 0%,#ddd7ff,transparent 45%),#f6f7fc}
+.login{background:white;border:1px solid #e5e8f3;border-radius:24px;padding:36px;width:min(440px,100%);box-shadow:0 18px 55px #17243b13}
+.logo{display:inline-grid;place-items:center;background:#6046e8;color:white;width:44px;height:44px;border-radius:14px;font-size:22px}
+h1{font-size:27px;margin:14px 0 6px;letter-spacing:-.6px}p{color:#6d778a;font-size:14px;line-height:1.5}
+label{font-size:12px;font-weight:750;color:#526075;display:block;margin-bottom:6px}
+input,select{border:1px solid #dce2ee;border-radius:11px;padding:11px 12px;background:white;min-width:0;width:100%;outline:none}
+input:focus,select:focus{border-color:#6e59ee;box-shadow:0 0 0 3px #eeeaff}
+.btn{border:0;border-radius:11px;padding:11px 16px;font-weight:750;background:#6046e8;color:#fff}
+.btn.alt{background:#f1efff;color:#503ad7}.btn.plain{background:white;color:#526075;border:1px solid #dce2ee}
+.login .btn{width:100%;margin-top:16px}.err{color:#bb3131;font-size:13px;min-height:20px;margin-top:10px}
+header{background:white;border-bottom:1px solid #e6eaf3;position:sticky;top:0;z-index:2}
+.top{max-width:1450px;margin:auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:17px;font-weight:850;display:flex;align-items:center;gap:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+main{max-width:1450px;margin:auto;padding:25px 24px 70px}.heading{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.heading h1{margin:0}.heading p{margin:5px 0}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.card{background:white;border:1px solid #e6eaf3;border-radius:18px;padding:19px;box-shadow:0 10px 30px #17243b07}
+.metric{font-size:30px;font-weight:850;letter-spacing:-.6px;margin:6px 0}.sub{font-size:12px;color:#6c778c}
+.section{margin-top:22px}.section h2{font-size:18px;margin:0 0 12px}.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.tools input{flex:1;min-width:220px}.tools select{width:auto;max-width:240px}
+.table-scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:#718096;font-size:11px;text-transform:uppercase;letter-spacing:.05em;background:#f8f9fd}td,th{padding:13px 12px;border-bottom:1px solid #edf0f5;vertical-align:top}tr:last-child td{border-bottom:0}tr:hover td{background:#fafaff}
+.pill{display:inline-block;background:#e4f8ed;color:#07814e;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:800}.pill.pending{background:#fff2df;color:#9a650f}
+.studentlink{border:0;background:transparent;color:#503ad7;text-decoration:underline;font-weight:750;padding:0}.section-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.section-tile{border:1px solid #e5e8f1;border-radius:14px;padding:14px;background:#fff}.section-tile strong{display:block;font-size:13px}.progress-track{height:7px;background:#eceff6;border-radius:9px;margin:11px 0;overflow:hidden}.progress-fill{height:100%;background:#6046e8}
+.topic-controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.topic-controls select,.topic-controls input{width:auto;min-width:160px;max-width:270px}.topic-summary{background:#fff;border:1px solid #e5e8f1;border-radius:14px;padding:13px 16px;margin:12px 0;display:flex;flex-wrap:wrap;gap:18px}.topic-summary b{color:#503ad7}.topic-students{font-size:12px;color:#526075;margin-top:10px}.topic-students summary{cursor:pointer;color:#503ad7;font-weight:700}.topic-students table{margin-top:8px}.formrow{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}.formrow label{margin:0 0 6px}.empty{color:#8290a3;padding:20px;text-align:center}
+@media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}.formrow{grid-template-columns:1fr 1fr}.formrow button{grid-column:1/-1}}@media(max-width:520px){.cards{grid-template-columns:1fr 1fr}.metric{font-size:24px}.top,main{padding:14px}.formrow{grid-template-columns:1fr}.formrow button{grid-column:auto}}
+</style></head><body>
+<div id="auth" class="auth"><form id="loginForm" class="login"><span class="logo">🎓</span><h1>Teacher Sign In</h1><p>Secure access to student records, completion statistics and question history.</p><label for="password">Teacher password</label><input id="password" type="password" required autocomplete="current-password" placeholder="Enter teacher password"><button class="btn" id="loginButton">Sign in to dashboard</button><div class="err" id="loginError" role="alert"></div></form></div>
+<div id="app" class="hidden">
+<header><div class="top"><div class="brand"><span class="logo" style="width:36px;height:36px;font-size:18px">🎓</span> PTE Teacher <span style="color:#9ca4b6;font-size:12px">Dashboard</span></div><div class="actions"><button class="btn alt" id="refresh">↻ Refresh</button><button class="btn plain" id="export">↓ Export CSV</button><button class="btn plain" id="logout">Sign out</button></div></div></header>
+<main><div class="heading"><div><h1>Student progress</h1><p>Completion status and last finished question by section, based on saved Google Sheets records.</p></div><span class="sub" id="updated"></span></div>
+<div class="cards" id="metrics"></div>
+<section class="section card"><h2>Add student</h2><form class="formrow" id="addForm"><div><label for="studentName">Full name</label><input id="studentName" required maxlength="120" placeholder="Student name"></div><div><label for="studentId">Student ID / Roll no.</label><input id="studentId" required maxlength="120" pattern="[A-Za-z0-9_.:-]+" placeholder="STU001"></div><div><label for="studentPassword">Student password</label><input id="studentPassword" type="password" required maxlength="200" autocomplete="new-password" placeholder="Create password"></div><button class="btn" id="addButton">+ Add student</button></form><div class="err" id="addError" role="status"></div></section>
+<section class="section card"><h2>Change student password</h2><form class="formrow" id="resetForm"><div><label for="resetId">Student</label><select id="resetId" required></select></div><div><label for="resetPassword">New password</label><input id="resetPassword" type="password" required maxlength="200" autocomplete="new-password"></div><button class="btn">Set password</button></form><div class="err" id="resetMessage"></div></section>
+<section class="section card"><h2>Manage student</h2><p>Change a student name, remove a student, or clear their saved progress. Passwords are managed above.</p>
+<div class="formrow"><div><label for="manageId">Student</label><select id="manageId"></select></div><div><label for="editName">Full name</label><input id="editName" maxlength="120" placeholder="New student name"></div><button class="btn alt" type="button" id="saveName">Save name</button></div>
+<div class="actions" style="margin-top:14px"><button class="btn plain" type="button" id="clearProgress">Clear progress</button><button class="btn plain" type="button" id="removeStudent">Remove student</button></div>
+<p class="sub">Removing a student blocks their login immediately. You may optionally permanently delete their progress records. Clearing progress cannot be undone.</p><div class="err" id="manageMessage" role="status"></div></section>
+<section class="section card"><h2>Project shortcuts</h2><div class="actions"><a class="btn alt" target="_blank" rel="noopener noreferrer" href="https://docs.google.com/spreadsheets/d/1mAFV5s3i0szE8sPthN8ui8T19AV5G8yxmm8uAaOpLrw/edit?gid=1923315893#gid=1923315893">📊 Open Google Sheet</a><a class="btn alt" target="_blank" rel="noopener noreferrer" href="https://github.com/induguvasanth/PTE-Practice-Update-23">⌘ Open GitHub Project</a></div><p>Links use the access permissions of your Google and GitHub accounts.</p></section>
+<section class="section card"><h2>Students overview</h2><div class="tools"><input id="search" placeholder="Search student name or ID"><select id="studentFilter"><option value="">All students</option></select></div><div class="table-scroll"><table><thead><tr><th>Student</th><th>Finished</th><th>Attempted</th><th>Sections</th><th>Last finished</th><th>Action</th></tr></thead><tbody id="studentRows"></tbody></table></div></section>
+<section class="section"><h2>Skill averages — practice scores</h2><div id="skillAverages" class="cards"></div></section><section class="section"><h2 id="sectionTitle">Section and topic progress</h2><div class="topic-controls"><select id="topicStudentFilter" aria-label="Filter student"><option value="">All students</option></select><select id="topicSkillFilter" aria-label="Filter skill"><option value="">All skills</option><option>Speaking</option><option>Writing</option><option>Reading</option><option>Listening</option></select><select id="topicFilter" aria-label="Filter topic"><option value="">All topics</option></select><select id="topicStatusFilter" aria-label="Filter progress"><option value="all">All topics</option><option value="finished">With finished questions</option><option value="pending">Not yet finished</option></select><input id="topicSearch" placeholder="Find topic or student" aria-label="Search topic or student" /></div><div class="sub" id="topicStudentSummary" aria-live="polite">All students</div><div id="topicSummary" class="topic-summary"></div><div id="sectionCards" class="section-grid"></div></section>
+<section class="section card"><h2>Question-level results</h2><div class="tools"><select id="moduleFilter"><option value="">All sections</option></select><select id="statusFilter"><option value="">All statuses</option><option value="finished">Finished</option><option value="attempted">Attempted</option></select></div><div class="table-scroll"><table><thead><tr><th>Student</th><th>Section / Topic</th><th>Question ID</th><th>Status</th><th>Score</th><th>Completed at</th></tr></thead><tbody id="resultRows"></tbody></table></div></section>
+<p class="sub">Average scores use saved numeric practice scores only (not official Pearson PTE scores); different task types may use different score scales. Finished totals count unique saved question records, not repeated attempts. Questions never opened may not be represented. Dates use Asia/Kolkata time.</p></main></div>
+<script>
+(()=>{'use strict';
+let token='',data={students:[],records:[]},selected='';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;',"'":'&#39;'}[c]));
+const date=s=>s&&!isNaN(Date.parse(s))?new Date(s).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'}):'—';
+function call(method,...args){return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[method](...args))}
+function message(err){return err?.message||String(err)}
+function current(){return data.records.filter(r=>!selected||r.studentId===selected)}
+function studentName(id){return data.students.find(s=>s.id===id)?.name||id}
+function summarize(records){const done=records.filter(r=>r.status==='finished');return {finished:done.length,attempted:records.filter(r=>r.status==='attempted').length,last:done.sort((a,b)=>String(b.completedAt||b.updatedAt).localeCompare(String(a.completedAt||a.updatedAt)))[0]}}
+
+const PTE_TOPIC_ORDER=[
+ ['Speaking','personalIntroduction','Personal Introduction'],['Speaking','readAloud','Read Aloud'],['Speaking','repeatSentence','Repeat Sentence'],['Speaking','describeImage','Describe Image'],['Speaking','retellLecture','Re-tell Lecture'],['Speaking','answerShortQuestion','Answer Short Question'],['Speaking','summarizeGroupDiscussion','Summarize Group Discussion'],['Speaking','respondSituation','Respond to a Situation'],
+ ['Writing','summarizeWrittenText','Summarize Written Text'],['Writing','essay','Write Essay'],
+ ['Reading','readingRWBlanks','R&W Fill in the Blanks'],['Reading','readingMCQMultiple','Multiple Choice, Multiple Answers'],['Reading','reorderParagraph','Re-order Paragraph'],['Reading','readingBlanks','Fill in the Blanks'],['Reading','readingMCQSingle','Multiple Choice, Single Answer'],
+ ['Listening','summarizeSpoken','Summarize Spoken Text'],['Listening','listeningMCQMultiple','Multiple Choice, Multiple Answers'],['Listening','listeningBlanks','Fill in the Blanks'],['Listening','highlightSummary','Highlight Correct Summary'],['Listening','listeningMCQSingle','Multiple Choice, Single Answer'],['Listening','missingWord','Select Missing Word'],['Listening','incorrectWords','Highlight Incorrect Words'],['Listening','dictation','Write from Dictation']
+];
+const PTE_TOPICS=Object.fromEntries(PTE_TOPIC_ORDER.map(([skill,key,label])=>[key,[skill,label]]));
+const TOPIC_RANK=new Map(PTE_TOPIC_ORDER.map(([skill,key,label],i)=>[skill+'|'+label,i]));
+
+function pteTopic(r){const raw=String(r.task||'');let key=raw.split(' / ')[0].trim();if(PTE_TOPICS[key])return PTE_TOPICS[key];const compact=key.toLowerCase().replace(/[^a-z0-9]/g,'');const aliases={readingwritingfillintheblanks:'readingRWBlanks',rwfillintheblanks:'readingRWBlanks',readingfillintheblanks:'readingBlanks',reorderparagraph:'reorderParagraph',readingmultiplechoicemultipleanswers:'readingMCQMultiple',readingmultiplechoicesingleanswer:'readingMCQSingle',essaywriting:'essay',writeessay:'essay',summarizewrittentext:'summarizeWrittenText'};if(PTE_TOPICS[aliases[compact]])return PTE_TOPICS[aliases[compact]];if(compact==='speakingwriting')return ['Speaking','Unclassified older records'];if(['reading','listening','speaking','writing'].includes(compact))return [compact[0].toUpperCase()+compact.slice(1),'Unclassified older records'];return [key||'Other','Unclassified older records'];}
+function pteScore(rows){const nums=rows.filter(r=>r.status==='finished'&&r.score!==''&&r.score!==null&&r.score!==undefined&&Number.isFinite(Number(r.score))).map(r=>Number(r.score));return nums.length?{label:(nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(1),count:nums.length}:{label:'—',count:0};}
+function pteLast(rows){return rows.filter(r=>r.status==='finished').sort((a,b)=>String(b.completedAt||b.updatedAt||'').localeCompare(String(a.completedAt||a.updatedAt||'')))[0];}
+function pteGroup(rows){const m=new Map();Object.values(PTE_TOPICS).forEach(([section,topic])=>{const k=section+'|'+topic;if(!m.has(k))m.set(k,{section,topic,rows:[]})});rows.forEach(r=>{const [section,topic]=pteTopic(r),k=section+'|'+topic;if(!m.has(k))m.set(k,{section,topic,rows:[]});m.get(k).rows.push(r)});return [...m.values()].sort((a,b)=>(TOPIC_RANK.get(a.section+'|'+a.topic)??999)-(TOPIC_RANK.get(b.section+'|'+b.topic)??999)||a.topic.localeCompare(b.topic));}
+
+function render(){
+ const records=current(),sum=summarize(records),sections=[...new Set(records.map(r=>r.task))];
+ $('metrics').innerHTML=[
+ ['Students',selected?1:data.students.length,'Registered learners'],
+ ['Finished questions',sum.finished,'Unique completed records'],
+ ['Attempted',sum.attempted,'Not yet finished'],
+ ['Active sections',sections.length,'Sections with progress']
+ ].map(x=>'<div class="card"><div class="sub">'+x[0]+'</div><div class="metric">'+x[1]+'</div><div class="sub">'+x[2]+'</div></div>').join('');
+ const search=$('search').value.trim().toLowerCase();
+ $('studentRows').innerHTML=data.students.filter(s=>(!selected||s.id===selected)&&(!search||(s.name+' '+s.id).toLowerCase().includes(search))).map(s=>{
+ const rr=data.records.filter(r=>r.studentId===s.id),v=summarize(rr);
+ return '<tr><td><b>'+esc(s.name)+'</b><div class="sub">'+esc(s.id)+'</div></td><td><span class="pill">'+v.finished+'</span></td><td>'+v.attempted+'</td><td>'+new Set(rr.map(r=>r.task)).size+'</td><td>'+esc(v.last?(v.last.task+' / '+v.last.questionId+' · '+date(v.last.completedAt||v.last.updatedAt)):'—')+'</td><td><button class="studentlink" data-id="'+esc(s.id)+'">View progress →</button></td></tr>'
+ }).join('')||'<tr><td colspan="6" class="empty">No matching students</td></tr>';
+ document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{selected=b.dataset.id;$('studentFilter').value=selected;const ts=$('topicStudentFilter');const previousStudent=ts.value;ts.innerHTML='<option value="">All students</option>'+data.students.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>').join('');ts.value=data.students.some(s=>s.id===previousStudent)?previousStudent:'';$('resetId').innerHTML=data.students.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>').join('');$('manageId').innerHTML=data.students.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>').join('');
+const topicSelect=$('topicStudentFilter'),oldTopic=topicSelect.value;
+topicSelect.innerHTML='<option value="">All students</option>'+data.students.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>').join('');
+topicSelect.value=data.students.some(s=>s.id===oldTopic)?oldTopic:'';
+render()});
+  $('sectionTitle').textContent=selected?'Section and topic progress — '+studentName(selected):'Section and topic progress — All students';
+  $('skillAverages').innerHTML=['Reading','Listening','Speaking','Writing'].map(skill=>{const rr=records.filter(r=>pteTopic(r)[0]===skill),done=rr.filter(r=>r.status==='finished'),avg=pteScore(rr);return '<div class="card"><div class="sub">'+skill+'</div><div class="metric">'+avg.label+'</div><div class="sub">Average of '+avg.count+' scored questions · '+done.length+' finished</div></div>'}).join('');
+  const skillFilter=$('topicSkillFilter').value,topicFilter=$('topicFilter').value,progressFilter=$('topicStatusFilter').value,query=$('topicSearch').value.trim().toLowerCase();
+  const topicStudent=$('topicStudentFilter').value;
+  const topicRecords=topicStudent?records.filter(r=>r.studentId===topicStudent):records;
+  const groups=pteGroup(topicRecords);
+  const topicOptions=groups.filter(g=>!skillFilter||g.section===skillFilter).map(g=>g.section+'|'+g.topic);
+  if(topicFilter&&!topicOptions.includes(topicFilter))$('topicFilter').value='';
+  const chosen=$('topicFilter').value;
+  $('topicFilter').innerHTML='<option value="">All topics</option>'+groups.filter(g=>!skillFilter||g.section===skillFilter).map(g=>'<option value="'+esc(g.section+'|'+g.topic)+'" '+(chosen===g.section+'|'+g.topic?'selected':'')+'>'+esc(g.topic)+'</option>').join('');
+  const visible=groups.filter(g=>(!skillFilter||g.section===skillFilter)&&(!chosen||g.section+'|'+g.topic===chosen)&&
+   (progressFilter!=='finished'||g.rows.some(r=>r.status==='finished'))&&
+   (progressFilter!=='pending'||!g.rows.some(r=>r.status==='finished'))&&
+   (!query||(g.section+' '+g.topic).toLowerCase().includes(query)||g.rows.some(r=>(studentName(r.studentId)+' '+r.studentId).toLowerCase().includes(query))));
+  $('topicStudentSummary').textContent=topicStudent?'Student: '+studentName(topicStudent):'All students';
+  const active=visible.filter(g=>g.rows.some(r=>r.status==='finished')).length;
+  const finishedTotal=visible.reduce((n,g)=>n+g.rows.filter(r=>r.status==='finished').length,0);
+  const studentsDone=new Set(visible.flatMap(g=>g.rows.filter(r=>r.status==='finished').map(r=>r.studentId))).size;
+  $('topicSummary').innerHTML='<span><b>'+visible.length+'</b> topics shown</span><span><b>'+active+'</b> topics with completions</span><span><b>'+finishedTotal+'</b> questions finished</span><span><b>'+studentsDone+'</b> students with completions</span>';
+  $('sectionCards').innerHTML=visible.map(g=>{const rr=g.rows,done=rr.filter(r=>r.status==='finished'),v=summarize(rr),avg=pteScore(rr),last=pteLast(rr);
+    const students=[...new Set(rr.map(r=>r.studentId))].map(id=>{const sr=rr.filter(r=>r.studentId===id),sd=sr.filter(r=>r.status==='finished'),sa=pteScore(sr),sl=pteLast(sr);return {id,name:studentName(id),finished:sd.length,attempted:sr.length-sd.length,avg:sa.label,last:sl}}).sort((a,b)=>b.finished-a.finished||a.name.localeCompare(b.name));
+    const studentTable=students.length?'<details class="topic-students"><summary>'+students.filter(x=>x.finished).length+' students finished questions · View students</summary><div class="table-scroll"><table><thead><tr><th>Student</th><th>Finished</th><th>Attempted</th><th>Average</th><th>Last finished</th></tr></thead><tbody>'+students.map(st=>'<tr><td>'+esc(st.name)+'</td><td>'+st.finished+'</td><td>'+st.attempted+'</td><td>'+esc(st.avg)+'</td><td>'+esc(st.last?'Q'+st.last.questionId+' · '+date(st.last.completedAt||st.last.updatedAt):'—')+'</td></tr>').join('')+'</tbody></table></div></details>':'<p class="sub">No student activity yet</p>';
+    const percent=rr.length?Math.round(100*done.length/rr.length):0;
+    return '<div class="section-tile"><strong>'+esc(g.section)+' · '+esc(g.topic)+'</strong><div class="progress-track"><div class="progress-fill" style="width:'+percent+'%"></div></div><div><span class="pill">'+done.length+' finished</span> <span class="pill pending">'+v.attempted+' attempted</span></div><p class="sub">Average practice score: <b>'+avg.label+'</b> ('+avg.count+' scored)</p><p class="sub">Last: '+esc(last?'Question '+last.questionId+' · '+date(last.completedAt||last.updatedAt):'Not finished yet')+'</p>'+studentTable+'</div>';
+  }).join('')||'<p class="empty">No topics match the selected filters.</p>';
+ const module=$('moduleFilter').value,status=$('statusFilter').value;
+ const modules=[...new Set(records.map(r=>r.task))].sort();$('moduleFilter').innerHTML='<option value="">All sections</option>'+modules.map(m=>'<option value="'+esc(m)+'" '+(module===m?'selected':'')+'>'+esc(m)+'</option>').join('');
+ $('resultRows').innerHTML=records.filter(r=>(!module||r.task===module)&&(!status||r.status===status)).sort((a,b)=>String(b.completedAt||b.updatedAt).localeCompare(String(a.completedAt||a.updatedAt))).slice(0,1000).map(r=>
+ '<tr><td>'+esc(studentName(r.studentId))+'<div class="sub">'+esc(r.studentId)+'</div></td><td>'+esc(pteTopic(r).join(' · '))+'</td><td>'+esc(r.questionId)+'</td><td><span class="pill '+(r.status==='finished'?'':'pending')+'">'+esc(r.status)+'</span></td><td>'+esc(r.score===''?'—':r.score)+'</td><td>'+esc(date(r.completedAt|| (r.status==='finished'?r.updatedAt:null)))+'</td></tr>'
+ ).join('')||'<tr><td colspan="6" class="empty">No saved results</td></tr>';
+}
+async function load(){const b=$('refresh');b.disabled=true;try{data=await call('teacherDashboardData',token);$('updated').textContent='Refreshed '+date(data.serverTime);$('studentFilter').innerHTML='<option value="">All students</option>'+data.students.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>').join('');if(!data.students.some(s=>s.id===selected))selected='';$('studentFilter').value=selected;$('resetId').innerHTML=data.students.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>').join('');$('manageId').innerHTML=data.students.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>').join('');
+const topicSelect=$('topicStudentFilter'),oldTopic=topicSelect.value;
+topicSelect.innerHTML='<option value="">All students</option>'+data.students.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>').join('');
+topicSelect.value=data.students.some(s=>s.id===oldTopic)?oldTopic:'';
+render()}catch(e){alert(message(e));if(/expired/i.test(message(e)))logout()}finally{b.disabled=false}}
+function logout(){call('teacherLogout',token).catch(()=>{});localStorage.removeItem('pte_teacher_token_v14');token='';data={students:[],records:[]};$('app').classList.add('hidden');$('auth').classList.remove('hidden');$('password').value=''}
+$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginError').textContent='';$('loginButton').disabled=true;try{token=await call('teacherLogin',$('password').value);localStorage.setItem('pte_teacher_token_v14',token);$('password').value='';$('auth').classList.add('hidden');$('app').classList.remove('hidden');await load()}catch(err){$('loginError').textContent=message(err)}finally{$('loginButton').disabled=false}};
+$('addForm').onsubmit=async e=>{e.preventDefault();$('addError').textContent='';$('addButton').disabled=true;try{await call('teacherAddStudent',token,$('studentId').value.trim(),$('studentName').value.trim(),$('studentPassword').value);$('addForm').reset();await load();$('addError').style.color='#087f51';$('addError').textContent='Student added successfully'}catch(err){$('addError').style.color='#bb3131';$('addError').textContent=message(err)}finally{$('addButton').disabled=false}};
+$('resetForm').onsubmit=async e=>{e.preventDefault();$('resetMessage').textContent='';try{await call('teacherSetStudentPassword',token,$('resetId').value,$('resetPassword').value);$('resetForm').reset();$('resetMessage').style.color='#087f51';$('resetMessage').textContent='Password updated; old student sessions are now invalid.'}catch(err){$('resetMessage').style.color='#bb3131';$('resetMessage').textContent=message(err)}};
+function managementMessage(msg,failed){$('manageMessage').style.color=failed?'#bb3131':'#087f51';$('manageMessage').textContent=msg}
+$('manageId').onchange=()=>{const st=data.students.find(s=>s.id===$('manageId').value);$('editName').value=st?.name||''};
+$('saveName').onclick=async()=>{const id=$('manageId').value,name=$('editName').value.trim();if(!id||!name)return managementMessage('Select a student and enter their name.',true);try{await call('teacherEditStudent',token,id,name);await load();$('manageId').value=id;managementMessage('Student name updated.',false)}catch(e){managementMessage(message(e),true)}};
+$('clearProgress').onclick=async()=>{const id=$('manageId').value;if(!id)return;if(!confirm('Permanently delete ALL saved question progress for '+studentName(id)+'? This cannot be undone.'))return;try{const r=await call('teacherClearStudentProgress',token,id);await load();managementMessage('Deleted '+r.removed+' progress records.',false)}catch(e){managementMessage(message(e),true)}};
+$('removeStudent').onclick=async()=>{const id=$('manageId').value;if(!id)return;const name=studentName(id);if(!confirm('Remove '+name+' ('+id+')? They will lose access immediately.'))return;const purge=confirm('Also PERMANENTLY DELETE their question progress? OK = delete progress; Cancel = keep historical records.');try{const r=await call('teacherDeleteStudent',token,id,purge);selected='';await load();managementMessage('Student removed. '+r.deletedProgress+' progress records deleted.',false)}catch(e){managementMessage(message(e),true)}};
+['topicStudentFilter','topicSkillFilter','topicFilter','topicStatusFilter'].forEach(id=>$(id).onchange=render);$('topicSearch').oninput=render;
+$('studentFilter').onchange=e=>{selected=e.target.value;render()};$('search').oninput=render;$('moduleFilter').onchange=render;$('statusFilter').onchange=render;
+$('refresh').onclick=load;$('logout').onclick=logout;
+$('export').onclick=()=>{const rows=[['Student ID','Student Name','Section','Question ID','Status','Score','Completed At','Updated At'],...current().map(r=>[r.studentId,studentName(r.studentId),r.task,r.questionId,r.status,r.score,r.completedAt,r.updatedAt])];const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='PTE-Teacher-Results.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),500)};
+const previous=localStorage.getItem('pte_teacher_token_v14');if(previous){token=previous;$('auth').classList.add('hidden');$('app').classList.remove('hidden');load().catch(()=>logout())}
+})();
+</script></body></html>
